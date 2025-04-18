@@ -4,6 +4,7 @@ using PC_Rodikliai.Services.HardwareMonitor;
 using PC_Rodikliai.Services.AlertService;
 using PC_Rodikliai.Services.HotkeyService;
 using System.Windows;
+using PC_Rodikliai.Views;
 
 namespace PC_Rodikliai;
 

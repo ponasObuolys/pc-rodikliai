@@ -14,20 +14,22 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
     private readonly IHardwareMonitorService _hardwareMonitor;
 
     [ObservableProperty]
-    private ObservableCollection<MetricViewModel> _metrics = new();
+    private ObservableCollection<MetricsViewModel> _metrics = new();
 
     public MainViewModel(IHardwareMonitorService hardwareMonitor)
     {
         _hardwareMonitor = hardwareMonitor;
         InitializeMetrics();
+        _hardwareMonitor.StartMonitoring();
     }
 
     private void InitializeMetrics()
     {
-        Metrics.Add(new MetricViewModel { Title = "CPU Apkrova", Value = 0, Unit = "%" });
-        Metrics.Add(new MetricViewModel { Title = "RAM Naudojimas", Value = 0, Unit = "GB" });
-        Metrics.Add(new MetricViewModel { Title = "Disko Naudojimas", Value = 0, Unit = "GB" });
-        Metrics.Add(new MetricViewModel { Title = "Tinklo Greitis", Value = 0, Unit = "Mbps" });
+        Metrics.Add(new MetricsViewModel(_hardwareMonitor, "CPU", "🔲", Brushes.OrangeRed));
+        Metrics.Add(new MetricsViewModel(_hardwareMonitor, "RAM", "📊", Brushes.DodgerBlue));
+        Metrics.Add(new MetricsViewModel(_hardwareMonitor, "GPU", "🎮", Brushes.LimeGreen));
+        Metrics.Add(new MetricsViewModel(_hardwareMonitor, "Tinklas", "🌐", Brushes.MediumPurple));
+        Metrics.Add(new MetricsViewModel(_hardwareMonitor, "Diskai", "💾", Brushes.Gold));
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

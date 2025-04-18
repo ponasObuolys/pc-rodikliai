@@ -41,18 +41,48 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Metrikos antraštės stilius -->
+    <!-- Teksto stiliai -->
     <Style x:Key="MetricHeaderStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
-        <Setter Property="Margin" Value="0,10,0,5"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
     </Style>
 
-    <!-- Metrikos reikšmės stilius -->
     <Style x:Key="MetricValueStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource PrimaryTextBrush}"/>
+    </Style>
+
+    <Style x:Key="MetricLabelStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Foreground" Value="{StaticResource SubtleTextBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+    </Style>
+
+    <!-- ProgressBar stilius -->
+    <Style TargetType="ProgressBar">
+        <Setter Property="Height" Value="2"/>
+        <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <!-- Border stiliai -->
+    <Style x:Key="MetricCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SecondaryBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Padding" Value="15"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="10" 
+                                ShadowDepth="1" 
+                                Opacity="0.2" 
+                                Color="Gray"/>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Progreso juostos stilius -->

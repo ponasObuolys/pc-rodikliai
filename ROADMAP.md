@@ -1,18 +1,18 @@
-# PC Rodikliai - Projekto Planas
+# PC-Rodikliai Projekto Planas
 
 ## v0.1.0 - Bazinė funkcionalumo versija
 - [x] Sukurti bazinę projekto struktūrą
 - [x] Implementuoti MainViewModel
 - [x] Implementuoti Metric modelį
-- [ ] Sukurti pagrindinį langą su metrikų atvaizdavimu
-- [ ] Implementuoti CPU apkrovos matavimą
-- [ ] Implementuoti RAM naudojimo matavimą
-- [ ] Implementuoti disko naudojimo matavimą
-- [ ] Implementuoti tinklo greičio matavimą
+- [x] Sukurti pagrindinį langą su metrikų atvaizdavimu
+- [x] Implementuoti CPU apkrovos matavimą
+- [x] Implementuoti RAM naudojimo matavimą
+- [x] Implementuoti disko naudojimo matavimą
+- [x] Implementuoti tinklo greičio matavimą
 
 ## v0.2.0 - Realaus laiko atnaujinimai
-- [ ] Pridėti realaus laiko metrikų atnaujinimą
-- [ ] Implementuoti grafikus metrikų vizualizacijai
+- [x] Pridėti realaus laiko metrikų atnaujinimą
+- [x] Implementuoti grafikus metrikų vizualizacijai
 - [ ] Pridėti istorijos kaupimą
 - [ ] Pridėti galimybę eksportuoti duomenis
 
