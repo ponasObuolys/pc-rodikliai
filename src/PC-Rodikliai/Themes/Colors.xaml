@@ -1,0 +1,39 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Pagrindinės spalvos -->
+    <Color x:Key="PrimaryColor">#1E1E1E</Color>
+    <Color x:Key="SecondaryColor">#2D2D2D</Color>
+    <Color x:Key="AccentColor">#007ACC</Color>
+    <Color x:Key="TextColor">#FFFFFF</Color>
+    <Color x:Key="SubtleTextColor">#B0B0B0</Color>
+
+    <!-- Šešėliai -->
+    <Color x:Key="ShadowColor">#000000</Color>
+
+    <!-- Grafikai -->
+    <Color x:Key="CPUColor">#E74C3C</Color>
+    <Color x:Key="RAMColor">#3498DB</Color>
+    <Color x:Key="GPUColor">#2ECC71</Color>
+    <Color x:Key="NetworkUpColor">#E67E22</Color>
+    <Color x:Key="NetworkDownColor">#9B59B6</Color>
+    <Color x:Key="DiskColor">#34495E</Color>
+
+    <!-- Šepetėliai -->
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource PrimaryColor}" Opacity="0.95"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}"/>
+    <SolidColorBrush x:Key="SubtleTextBrush" Color="{StaticResource SubtleTextColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource AccentColor}" Opacity="0.3"/>
+
+    <!-- Grafikų šepetėliai -->
+    <SolidColorBrush x:Key="CPUBrush" Color="{StaticResource CPUColor}"/>
+    <SolidColorBrush x:Key="RAMBrush" Color="{StaticResource RAMColor}"/>
+    <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource GPUColor}"/>
+    <SolidColorBrush x:Key="NetworkUpBrush" Color="{StaticResource NetworkUpColor}"/>
+    <SolidColorBrush x:Key="NetworkDownBrush" Color="{StaticResource NetworkDownColor}"/>
+    <SolidColorBrush x:Key="DiskBrush" Color="{StaticResource DiskColor}"/>
+
+</ResourceDictionary> 
