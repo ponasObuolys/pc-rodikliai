@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="PC_Rodikliai.Components.Graphs.MetricGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:local="clr-namespace:PC_Rodikliai.Components.Graphs">
+    
+    <Grid>
+        <Border Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Margin="5">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding Title}"
+                         FontSize="14"
+                         FontWeight="SemiBold"
+                         Margin="0,0,0,10"/>
+
+                <lvc:CartesianChart Grid.Row="1"
+                                  Series="{Binding Series}"
+                                  XAxes="{Binding XAxes}"
+                                  YAxes="{Binding YAxes}"
+                                  Height="150"
+                                  TooltipPosition="Hidden">
+                    <lvc:CartesianChart.Background>
+                        <SolidColorBrush Color="Transparent"/>
+                    </lvc:CartesianChart.Background>
+                </lvc:CartesianChart>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl> 

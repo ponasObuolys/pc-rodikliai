@@ -4,9 +4,9 @@ namespace PC_Rodikliai.Services.HardwareMonitor
 {
     public class CpuMetricsEventArgs : EventArgs
     {
-        public double TotalLoad { get; set; }
-        public double Temperature { get; set; }
-        public double Power { get; set; }
-        public double Frequency { get; set; }
+        public float TotalLoad { get; set; }
+        public float Temperature { get; set; }
+        public float Power { get; set; }
+        public float Frequency { get; set; }
     }
 } 

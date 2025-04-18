@@ -8,14 +8,49 @@
         xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         mc:Ignorable="d"
         Title="PC Rodikliai" Height="600" Width="1000"
-        WindowStartupLocation="CenterScreen">
-    
-    <Window.DataContext>
-        <viewmodels:MainViewModel/>
-    </Window.DataContext>
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        AllowsTransparency="True"
+        Background="Transparent">
 
     <Grid Background="{StaticResource BackgroundBrush}">
-        <ItemsControl ItemsSource="{Binding Metrics}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Antraštės juosta -->
+        <Grid Grid.Row="0" Height="30" Background="{StaticResource BorderBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Lango pavadinimas -->
+            <TextBlock Text="PC Rodikliai" 
+                     Foreground="{StaticResource TextBrush}"
+                     Margin="10,0,0,0"
+                     VerticalAlignment="Center"/>
+
+            <!-- Valdymo mygtukai -->
+            <StackPanel Grid.Column="1" 
+                      Orientation="Horizontal" 
+                      HorizontalAlignment="Right">
+                <Button Content="⚙" 
+                        Style="{StaticResource WindowControlButton}"
+                        Command="{Binding ShowSettingsCommand}"/>
+                <Button Content="🗕" 
+                        Style="{StaticResource WindowControlButton}"
+                        Command="{Binding MinimizeCommand}"/>
+                <Button Content="✕" 
+                        Style="{StaticResource WindowControlButton}"
+                        Command="{Binding CloseCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Pagrindinis turinys -->
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding MetricsViewModel.Values}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel/>

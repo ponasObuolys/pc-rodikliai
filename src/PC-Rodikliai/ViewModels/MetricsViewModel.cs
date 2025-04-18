@@ -8,17 +8,27 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using PC_Rodikliai.Services.HardwareMonitor;
 using SkiaSharp;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using PC_Rodikliai.Components.Graphs;
+using PC_Rodikliai.Services;
 
 namespace PC_Rodikliai.ViewModels;
 
-public partial class MetricsViewModel : ObservableObject
+public partial class MetricsViewModel : ObservableObject, IDisposable
 {
     private readonly IHardwareMonitorService _hardwareMonitor;
     private readonly string _icon;
     private readonly Brush _progressBrush;
+    private double _cpuUsage;
+    private double _ramUsage;
+    private double _diskUsage;
+    private double _networkSpeed;
+    private bool _disposed;
 
     [ObservableProperty]
-    private string _title;
+    private string _title = string.Empty;
 
     [ObservableProperty]
     private ObservableCollection<MetricValue> _values = new();
@@ -26,7 +36,60 @@ public partial class MetricsViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ISeries> _series = new();
 
-    public Axis[] XAxes { get; } =
+    public MetricGraphViewModel CpuGraphViewModel { get; }
+    public MetricGraphViewModel RamGraphViewModel { get; }
+    public MetricGraphViewModel DiskGraphViewModel { get; }
+    public MetricGraphViewModel NetworkGraphViewModel { get; }
+
+    public double CpuUsage
+    {
+        get => _cpuUsage;
+        set
+        {
+            if (Math.Abs(_cpuUsage - value) < 0.01) return;
+            _cpuUsage = value;
+            CpuGraphViewModel.AddValue(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public double RamUsage
+    {
+        get => _ramUsage;
+        set
+        {
+            if (Math.Abs(_ramUsage - value) < 0.01) return;
+            _ramUsage = value;
+            RamGraphViewModel.AddValue(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public double DiskUsage
+    {
+        get => _diskUsage;
+        set
+        {
+            if (Math.Abs(_diskUsage - value) < 0.01) return;
+            _diskUsage = value;
+            DiskGraphViewModel.AddValue(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public double NetworkSpeed
+    {
+        get => _networkSpeed;
+        set
+        {
+            if (Math.Abs(_networkSpeed - value) < 0.01) return;
+            _networkSpeed = value;
+            NetworkGraphViewModel.AddValue(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public Axis[]? XAxes { get; } =
     {
         new Axis
         {
@@ -35,7 +98,7 @@ public partial class MetricsViewModel : ObservableObject
         }
     };
 
-    public Axis[] YAxes { get; } =
+    public Axis[]? YAxes { get; } =
     {
         new Axis
         {
@@ -50,17 +113,26 @@ public partial class MetricsViewModel : ObservableObject
         string icon,
         Brush progressBrush)
     {
-        _hardwareMonitor = hardwareMonitor;
-        Title = title;
-        _icon = icon;
-        _progressBrush = progressBrush;
+        _hardwareMonitor = hardwareMonitor ?? throw new ArgumentNullException(nameof(hardwareMonitor));
+        Title = title ?? throw new ArgumentNullException(nameof(title));
+        _icon = icon ?? throw new ArgumentNullException(nameof(icon));
+        _progressBrush = progressBrush ?? throw new ArgumentNullException(nameof(progressBrush));
+
+        // Initialize graph view models
+        CpuGraphViewModel = new MetricGraphViewModel("CPU Usage");
+        RamGraphViewModel = new MetricGraphViewModel("RAM Usage");
+        DiskGraphViewModel = new MetricGraphViewModel("Disk Usage");
+        NetworkGraphViewModel = new MetricGraphViewModel("Network Speed");
 
         SubscribeToEvents();
+        StartMonitoring();
     }
 
     private void SubscribeToEvents()
     {
-        switch (_title)
+        if (_disposed || _hardwareMonitor == null) return;
+
+        switch (Title)
         {
             case "CPU":
                 _hardwareMonitor.CpuMetricsUpdated += OnCpuMetricsUpdated;
@@ -71,174 +143,102 @@ public partial class MetricsViewModel : ObservableObject
             case "GPU":
                 _hardwareMonitor.GpuMetricsUpdated += OnGpuMetricsUpdated;
                 break;
-            case "Tinklas":
+            case "Network":
                 _hardwareMonitor.NetworkMetricsUpdated += OnNetworkMetricsUpdated;
                 break;
-            case "Diskai":
+            case "Drive":
                 _hardwareMonitor.DriveMetricsUpdated += OnDriveMetricsUpdated;
+                break;
+        }
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        if (_hardwareMonitor == null) return;
+
+        switch (Title)
+        {
+            case "CPU":
+                _hardwareMonitor.CpuMetricsUpdated -= OnCpuMetricsUpdated;
+                break;
+            case "RAM":
+                _hardwareMonitor.RamMetricsUpdated -= OnRamMetricsUpdated;
+                break;
+            case "GPU":
+                _hardwareMonitor.GpuMetricsUpdated -= OnGpuMetricsUpdated;
+                break;
+            case "Network":
+                _hardwareMonitor.NetworkMetricsUpdated -= OnNetworkMetricsUpdated;
+                break;
+            case "Drive":
+                _hardwareMonitor.DriveMetricsUpdated -= OnDriveMetricsUpdated;
                 break;
         }
     }
 
     private void OnCpuMetricsUpdated(object? sender, CpuMetricsEventArgs e)
     {
+        if (_disposed || e == null) return;
+
         AddOrUpdateValue("Apkrova", $"{e.TotalLoad:F1}%", e.TotalLoad);
         AddOrUpdateValue("Temperatūra", $"{e.Temperature:F1}°C", e.Temperature);
-        AddOrUpdateValue("Dažnis", $"{e.Frequency:F1} MHz", e.Frequency / 50); // Normalizuojame iki 100%
-        AddOrUpdateValue("Galia", $"{e.Power:F1} W", e.Power / 2); // Normalizuojame iki 100%
+        AddOrUpdateValue("Dažnis", $"{e.Frequency:F1} GHz", e.Frequency);
+        AddOrUpdateValue("Galia", $"{e.Power:F1} W", e.Power);
 
-        // Atnaujinti grafiką
-        if (Series.Count == 0)
-        {
-            Series.Add(new LineSeries<double>
-            {
-                Values = new ObservableCollection<double> { e.TotalLoad },
-                Fill = null,
-                GeometrySize = 0,
-                LineSmoothness = 0.5,
-                Stroke = new SolidColorPaint(SKColors.OrangeRed) { StrokeThickness = 2 }
-            });
-        }
-        else
-        {
-            var series = (LineSeries<double>)Series[0];
-            var values = (ObservableCollection<double>)series.Values!;
-            if (values.Count > 60) // Laikome 1 minutės duomenis
-            {
-                values.RemoveAt(0);
-            }
-            values.Add(e.TotalLoad);
-        }
+        UpdateSeries(e.TotalLoad, SKColors.OrangeRed);
     }
 
     private void OnRamMetricsUpdated(object? sender, RamMetricsEventArgs e)
     {
-        var usedGB = e.UsedMemory / 1024;
-        var totalGB = e.TotalMemory / 1024;
-        
-        AddOrUpdateValue("Naudojama", $"{usedGB:F1} GB", e.MemoryLoad);
-        AddOrUpdateValue("Iš viso", $"{totalGB:F1} GB", 100);
-        AddOrUpdateValue("Laisva", $"{(totalGB - usedGB):F1} GB", 100 - e.MemoryLoad);
+        if (_disposed || e == null) return;
 
-        // Atnaujinti grafiką
-        if (Series.Count == 0)
-        {
-            Series.Add(new LineSeries<double>
-            {
-                Values = new ObservableCollection<double> { e.MemoryLoad },
-                Fill = null,
-                GeometrySize = 0,
-                LineSmoothness = 0.5,
-                Stroke = new SolidColorPaint(SKColors.DodgerBlue) { StrokeThickness = 2 }
-            });
-        }
-        else
-        {
-            var series = (LineSeries<double>)Series[0];
-            var values = (ObservableCollection<double>)series.Values!;
-            if (values.Count > 60)
-            {
-                values.RemoveAt(0);
-            }
-            values.Add(e.MemoryLoad);
-        }
+        AddOrUpdateValue("Apkrova", $"{e.MemoryLoad:F1}%", e.MemoryLoad);
+        AddOrUpdateValue("Naudojama", $"{e.UsedMemory:F1} GB", e.UsedMemory);
+        AddOrUpdateValue("Viso", $"{e.TotalMemory:F1} GB", e.TotalMemory);
+
+        UpdateSeries(e.MemoryLoad, SKColors.DodgerBlue);
     }
 
     private void OnGpuMetricsUpdated(object? sender, GpuMetricsEventArgs e)
     {
+        if (_disposed || e == null) return;
+
         AddOrUpdateValue("Apkrova", $"{e.CoreLoad:F1}%", e.CoreLoad);
         AddOrUpdateValue("Temperatūra", $"{e.Temperature:F1}°C", e.Temperature);
         AddOrUpdateValue("VRAM", $"{e.MemoryUsed:F1}/{e.MemoryTotal:F1} GB", (e.MemoryUsed / e.MemoryTotal) * 100);
-        AddOrUpdateValue("Ventiliatorius", $"{e.FanSpeed:F0} RPM", (e.FanSpeed / 3000) * 100); // Normalizuojame iki 100%
+        AddOrUpdateValue("Ventiliatorius", $"{e.FanSpeed:F0} RPM", (e.FanSpeed / 3000) * 100);
 
-        // TODO: Atnaujinti grafikus
+        UpdateSeries(e.CoreLoad, SKColors.MediumPurple);
     }
 
     private void OnNetworkMetricsUpdated(object? sender, NetworkMetricsEventArgs e)
     {
-        AddOrUpdateValue("Atsisiuntimas", $"{FormatSpeed(e.DownloadSpeed)}", (e.DownloadSpeed / 1000000) * 100); // Normalizuojame iki 100 MB/s
-        AddOrUpdateValue("Įkėlimas", $"{FormatSpeed(e.UploadSpeed)}", (e.UploadSpeed / 1000000) * 100);
-        AddOrUpdateValue("Iš viso atsisiųsta", $"{FormatBytes(e.DownloadTotal)}", 100);
-        AddOrUpdateValue("Iš viso įkelta", $"{FormatBytes(e.UploadTotal)}", 100);
+        if (_disposed || e == null) return;
 
-        // Atnaujinti grafiką
-        if (Series.Count == 0)
-        {
-            Series.Add(new LineSeries<double>
-            {
-                Name = "Atsisiuntimas",
-                Values = new ObservableCollection<double> { e.DownloadSpeed / (1024 * 1024) },
-                Fill = null,
-                GeometrySize = 0,
-                LineSmoothness = 0.5,
-                Stroke = new SolidColorPaint(SKColors.LimeGreen) { StrokeThickness = 2 }
-            });
-            Series.Add(new LineSeries<double>
-            {
-                Name = "Įkėlimas",
-                Values = new ObservableCollection<double> { e.UploadSpeed / (1024 * 1024) },
-                Fill = null,
-                GeometrySize = 0,
-                LineSmoothness = 0.5,
-                Stroke = new SolidColorPaint(SKColors.OrangeRed) { StrokeThickness = 2 }
-            });
-        }
-        else
-        {
-            var downloadSeries = (LineSeries<double>)Series[0];
-            var uploadSeries = (LineSeries<double>)Series[1];
-            var downloadValues = (ObservableCollection<double>)downloadSeries.Values!;
-            var uploadValues = (ObservableCollection<double>)uploadSeries.Values!;
+        AddOrUpdateValue("Atsisiuntimas", FormatSpeed(e.DownloadSpeed), (e.DownloadSpeed / 1000000) * 100);
+        AddOrUpdateValue("Įkėlimas", FormatSpeed(e.UploadSpeed), (e.UploadSpeed / 1000000) * 100);
+        AddOrUpdateValue("Iš viso atsisiųsta", FormatBytes(e.DownloadTotal), 100);
+        AddOrUpdateValue("Iš viso įkelta", FormatBytes(e.UploadTotal), 100);
 
-            if (downloadValues.Count > 60)
-            {
-                downloadValues.RemoveAt(0);
-                uploadValues.RemoveAt(0);
-            }
-            downloadValues.Add(e.DownloadSpeed / (1024 * 1024));
-            uploadValues.Add(e.UploadSpeed / (1024 * 1024));
-        }
+        UpdateSeries((e.DownloadSpeed + e.UploadSpeed) / (2 * 1000000) * 100, SKColors.LimeGreen);
     }
 
     private void OnDriveMetricsUpdated(object? sender, DriveMetricsEventArgs e)
     {
-        var usedGB = e.UsedSpace / 1024;
-        var totalGB = e.TotalSpace / 1024;
-        var usedPercent = (e.UsedSpace / e.TotalSpace) * 100;
+        if (_disposed || e == null) return;
 
-        AddOrUpdateValue($"{e.DriveLetter} naudojama", $"{usedGB:F1}/{totalGB:F1} GB", usedPercent);
-        if (e.Temperature > 0)
-        {
-            AddOrUpdateValue($"{e.DriveLetter} temperatūra", $"{e.Temperature:F1}°C", e.Temperature);
-        }
-        AddOrUpdateValue($"{e.DriveLetter} aktyvumas", $"{e.ActivityPercent:F1}%", e.ActivityPercent);
+        AddOrUpdateValue("Naudojama", FormatBytes(e.UsedSpace), (e.UsedSpace / e.TotalSpace) * 100);
+        AddOrUpdateValue("Iš viso", FormatBytes(e.TotalSpace), 100);
+        AddOrUpdateValue("Temperatūra", $"{e.Temperature:F1}°C", e.Temperature);
+        AddOrUpdateValue("Aktyvumas", $"{e.ActivityPercent:F1}%", e.ActivityPercent);
 
-        // Atnaujinti grafiką
-        if (Series.Count == 0)
-        {
-            Series.Add(new LineSeries<double>
-            {
-                Values = new ObservableCollection<double> { e.ActivityPercent },
-                Fill = null,
-                GeometrySize = 0,
-                LineSmoothness = 0.5,
-                Stroke = new SolidColorPaint(SKColors.Gold) { StrokeThickness = 2 }
-            });
-        }
-        else
-        {
-            var series = (LineSeries<double>)Series[0];
-            var values = (ObservableCollection<double>)series.Values!;
-            if (values.Count > 60)
-            {
-                values.RemoveAt(0);
-            }
-            values.Add(e.ActivityPercent);
-        }
+        UpdateSeries(e.ActivityPercent, SKColors.Gold);
     }
 
     private void AddOrUpdateValue(string label, string value, double percentage)
     {
+        if (Values == null) return;
+
         var existingValue = Values.FirstOrDefault(v => v.Label == label);
         if (existingValue != null)
         {
@@ -254,6 +254,33 @@ public partial class MetricsViewModel : ObservableObject
                 Percentage = percentage,
                 ProgressBrush = _progressBrush
             });
+        }
+    }
+
+    private void UpdateSeries(double value, SKColor color)
+    {
+        if (Series == null) return;
+
+        if (Series.Count == 0)
+        {
+            Series.Add(new LineSeries<double>
+            {
+                Values = new ObservableCollection<double> { value },
+                Fill = null,
+                GeometrySize = 0,
+                LineSmoothness = 0.5,
+                Stroke = new SolidColorPaint(color) { StrokeThickness = 2 }
+            });
+        }
+        else
+        {
+            var series = (LineSeries<double>)Series[0];
+            var values = (ObservableCollection<double>)series.Values!;
+            if (values.Count > 60)
+            {
+                values.RemoveAt(0);
+            }
+            values.Add(value);
         }
     }
 
@@ -275,6 +302,41 @@ public partial class MetricsViewModel : ObservableObject
     private static string FormatSpeed(float bytesPerSecond)
     {
         return $"{FormatBytes(bytesPerSecond)}/s";
+    }
+
+    private async void StartMonitoring()
+    {
+        if (_disposed || _hardwareMonitor == null) return;
+
+        try
+        {
+            while (!_disposed)
+            {
+                CpuUsage = _hardwareMonitor.GetCpuUsage();
+                RamUsage = _hardwareMonitor.GetRamUsage();
+                DiskUsage = _hardwareMonitor.GetDiskUsage();
+                NetworkSpeed = _hardwareMonitor.GetNetworkSpeed();
+
+                await Task.Delay(1000);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Klaida monitoringo cikle: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        _disposed = true;
+        UnsubscribeFromEvents();
+        
+        CpuGraphViewModel?.Dispose();
+        RamGraphViewModel?.Dispose();
+        DiskGraphViewModel?.Dispose();
+        NetworkGraphViewModel?.Dispose();
     }
 }
 

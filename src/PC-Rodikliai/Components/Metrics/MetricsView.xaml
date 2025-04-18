@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl x:Class="PC_Rodikliai.Components.Metrics.MetricsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:graphs="clr-namespace:PC_Rodikliai.Components.Graphs">
+    
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <WrapPanel>
+                <!-- CPU Metrics -->
+                <StackPanel Width="300">
+                    <graphs:MetricGraph DataContext="{Binding CpuGraphViewModel}"/>
+                    <TextBlock Text="{Binding CpuUsage, StringFormat={}CPU: {0}%}"
+                             FontSize="16"
+                             Margin="10,5"/>
+                </StackPanel>
+
+                <!-- RAM Metrics -->
+                <StackPanel Width="300">
+                    <graphs:MetricGraph DataContext="{Binding RamGraphViewModel}"/>
+                    <TextBlock Text="{Binding RamUsage, StringFormat={}RAM: {0}%}"
+                             FontSize="16"
+                             Margin="10,5"/>
+                </StackPanel>
+
+                <!-- Disk Metrics -->
+                <StackPanel Width="300">
+                    <graphs:MetricGraph DataContext="{Binding DiskGraphViewModel}"/>
+                    <TextBlock Text="{Binding DiskUsage, StringFormat={}Disk: {0}%}"
+                             FontSize="16"
+                             Margin="10,5"/>
+                </StackPanel>
+
+                <!-- Network Metrics -->
+                <StackPanel Width="300">
+                    <graphs:MetricGraph DataContext="{Binding NetworkGraphViewModel}"/>
+                    <TextBlock Text="{Binding NetworkSpeed, StringFormat={}Network: {0} MB/s}"
+                             FontSize="16"
+                             Margin="10,5"/>
+                </StackPanel>
+            </WrapPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl> 

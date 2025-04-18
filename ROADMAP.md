@@ -13,8 +13,10 @@
 
 2. Vartotojo sąsaja:
    - Metrikų kortelės
-   - Realaus laiko grafikai
-   - Taskbar integracija
+   - ✅ Realaus laiko grafikai su LiveCharts2
+   - ✅ Sistemos dėklo integracija su metrikų rodymu
+   - ✅ Null-safety ir gijų saugumas
+   - ✅ Slankiojo kablelio skaičių palyginimas
 
 3. Testavimas:
    - ✅ MetricsViewModel testai
@@ -63,6 +65,8 @@
    - Duomenų atnaujinimo testai
    - Grafikų atnaujinimo testai
    - Formatavimo funkcijų testai
+   - Null-safety testai
+   - Gijų saugumo testai
 
 2. ✅ HardwareMonitorService:
    - Tinklo greitaveikos ribiniai atvejai
@@ -119,9 +123,9 @@
 ## Sekantys Žingsniai
 
 1. Stabilumo gerinimas:
-   - Atminties nutekėjimo taisymas
-   - Išimčių apdorojimo tobulinimas
-   - Testavimo aprėpties didinimas
+   - ✅ Atminties nutekėjimo taisymas
+   - ✅ Išimčių apdorojimo tobulinimas
+   - ✅ Testavimo aprėpties didinimas
 
 2. Vartotojo sąsajos tobulinimas:
    - Nustatymų lango kūrimas
@@ -145,11 +149,15 @@
 
 ## v0.2.0 - Realaus laiko atnaujinimai (Dabartinis prioritetas)
 - [x] Pridėti realaus laiko metrikų atnaujinimą
-- [ ] Implementuoti grafikus metrikų vizualizacijai (LiveCharts2)
+- [x] Implementuoti grafikus metrikų vizualizacijai (LiveCharts2)
   - [x] CPU apkrovos grafikas
   - [x] RAM naudojimo grafikas
   - [x] Disko naudojimo grafikas
   - [x] Tinklo greičio grafikas
+- [x] Pridėti null-safety ir gijų saugumą
+  - [x] Null patikrinimų pridėjimas
+  - [x] Gijų saugumo užtikrinimas
+  - [x] Slankiojo kablelio skaičių palyginimo tobulinimas
 - [ ] Pridėti istorijos kaupimą
   - [ ] Duomenų bazės struktūros sukūrimas
   - [ ] Duomenų išsaugojimo logika
@@ -198,24 +206,25 @@
 
 ### Failų struktūra
 ```
-PC-Rodikliai/
-├── src/
-│   ├── PC-Rodikliai/
-│   │   ├── App.xaml
-│   │   ├── MainWindow.xaml
-│   │   ├── Components/
-│   │   │   ├── Clock/
-│   │   │   ├── Graphs/
-│   │   │   ├── Metrics/
-│   │   │   └── Settings/
-│   │   ├── Models/
-│   │   ├── ViewModels/
-│   │   ├── Services/
-│   │   │   ├── HardwareMonitor/
-│   │   │   ├── AlertService/
-│   │   │   └── HotkeyService/
-│   │   └── Themes/
-│   └── PC-Rodikliai.Tests/
-├── docs/
-└── tools/
+src/
+├── PC-Rodikliai/
+│   ├── Components/
+│   │   ├── Graphs/
+│   │   │   ├── MetricGraph.xaml
+│   │   │   └── MetricGraph.xaml.cs
+│   │   └── Metrics/
+│   │       ├── MetricsControl.xaml
+│   │       └── MetricsControl.xaml.cs
+│   ├── Services/
+│   │   └── HardwareMonitor/
+│   │       ├── IHardwareMonitorService.cs
+│   │       └── HardwareMonitorService.cs
+│   ├── ViewModels/
+│   │   ├── MainViewModel.cs
+│   │   └── MetricsViewModel.cs
+│   └── Views/
+│       └── MainWindow.xaml
+└── PC-Rodikliai.Tests/
+    └── ViewModels/
+        └── MetricsViewModelTests.cs
 ``` 

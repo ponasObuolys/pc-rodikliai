@@ -7,6 +7,23 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <Company>ponas Obuolys</Company>
+    <Authors>ponas Obuolys</Authors>
+    <Product>PC Rodikliai</Product>
+    <Description>Kompiuterio resursų stebėjimo įrankis</Description>
+    <Copyright>© 2024 ponas Obuolys</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageId>PC-Rodikliai</PackageId>
+    <NeutralLanguage>lt-LT</NeutralLanguage>
+    <PublisherName>ponas Obuolys</PublisherName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +33,10 @@
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
