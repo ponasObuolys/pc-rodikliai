@@ -1,55 +1,44 @@
-# PC-Rodikliai Projekto Planas
+# PC Rodikliai - Projekto Planas
 
-## v0.1.0 - Bazinė struktūra
-- [ ] Projekto inicializacija su WPF
-- [ ] LibreHardwareMonitor integravimas
-- [ ] Bazinė šoninės juostos UI struktūra
-- [ ] Laikrodžio komponentas
-- [ ] Bazinis stilius ir temos
+## v0.1.0 - Bazinė funkcionalumo versija
+- [x] Sukurti bazinę projekto struktūrą
+- [x] Implementuoti MainViewModel
+- [x] Implementuoti Metric modelį
+- [ ] Sukurti pagrindinį langą su metrikų atvaizdavimu
+- [ ] Implementuoti CPU apkrovos matavimą
+- [ ] Implementuoti RAM naudojimo matavimą
+- [ ] Implementuoti disko naudojimo matavimą
+- [ ] Implementuoti tinklo greičio matavimą
 
-## v0.2.0 - Pagrindiniai rodikliai
-- [ ] CPU monitoringas
-  - [ ] Apkrova
-  - [ ] Temperatūra
-  - [ ] Dažnis
-- [ ] RAM monitoringas
-  - [ ] Naudojimas
-  - [ ] Laisva atmintis
-- [ ] GPU monitoringas
-  - [ ] Apkrova
-  - [ ] Temperatūra
-  - [ ] VRAM naudojimas
-- [ ] Tinklo monitoringas
-  - [ ] Atsisiuntimas
-  - [ ] Įkėlimas
-- [ ] Diskų monitoringas
-  - [ ] Naudojimas
-  - [ ] Laisva vieta
+## v0.2.0 - Realaus laiko atnaujinimai
+- [ ] Pridėti realaus laiko metrikų atnaujinimą
+- [ ] Implementuoti grafikus metrikų vizualizacijai
+- [ ] Pridėti istorijos kaupimą
+- [ ] Pridėti galimybę eksportuoti duomenis
 
-## v0.3.0 - Grafikai
-- [ ] Universalus grafikų komponentas
-- [ ] Realaus laiko duomenų atnaujinimas
-- [ ] Grafikų stilizavimas
-- [ ] Grafikų istorijos išsaugojimas
+## v0.3.0 - Vartotojo sąsajos patobulinimai
+- [ ] Pridėti tamsią/šviesią temą
+- [ ] Pridėti galimybę keisti atnaujinimo intervalą
+- [ ] Pridėti galimybę pasirinkti rodomas metrikas
+- [ ] Pridėti įspėjimus apie kritines reikšmes
 
-## v0.4.0 - Pritaikymas
-- [ ] Temos keitimas
-- [ ] Spalvų schemos keitimas
-- [ ] Rodiklių rodymo/slėpimo nustatymai
-- [ ] DPI palaikymas
-- [ ] Pozicijos ir dydžio keitimas
+## v0.4.0 - Papildomos funkcijos
+- [ ] Pridėti temperatūros matavimus
+- [ ] Pridėti procesų sąrašą
+- [ ] Pridėti galimybę nustatyti įspėjimų ribas
+- [ ] Pridėti sistemos informacijos langą
 
-## v0.5.0 - Įspėjimai ir spartieji klavišai
-- [ ] Įspėjimų sistema
-- [ ] Įspėjimų konfigūravimas
-- [ ] Sparčiųjų klavišų sistema
-- [ ] Sparčiųjų klavišų konfigūravimas
+## v1.0.0 - Pirmasis oficialus leidimas
+- [ ] Optimizuoti veikimą
+- [ ] Ištaisyti žinomus klaidas
+- [ ] Pridėti dokumentaciją
+- [ ] Paruošti diegimo paketą
 
-## v1.0.0 - Išleidimas
-- [ ] Kodo optimizavimas
-- [ ] Testavimas
-- [ ] Dokumentacija
-- [ ] Diegimo programa
+## Ateities planai
+- Pridėti palaikymą kitiems OS
+- Pridėti debesies integraciją
+- Pridėti mobilią aplikaciją
+- Pridėti API
 
 ## Techninė specifikacija
 
