@@ -12,6 +12,7 @@
         Title="PC Rodikliai" 
         Height="800" 
         Width="400"
+        Icon="pack://application:,,,/Resources/icon.ico"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -81,41 +82,34 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Pagrindinis turinys -->
-                <ScrollViewer Grid.Row="1" 
-                             VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="10">
-                        <!-- CPU sekcija -->
-                        <metrics:MetricsControl Title="CPU"
-                                            Icon="💻"/>
-                        <graphs:CpuUsageChart x:Name="CpuChart" 
-                                            Margin="0,10,0,20"/>
-                        
-                        <!-- RAM sekcija -->
-                        <metrics:MetricsControl Title="RAM"
-                                            Icon="🧠"/>
-                        
-                        <!-- GPU sekcija -->
-                        <metrics:MetricsControl Title="GPU"
-                                            Icon="🎮"/>
-                        
-                        <!-- Tinklas -->
-                        <metrics:MetricsControl Title="Tinklas"
-                                            Icon="🌐"/>
-                        
-                        <!-- Diskai -->
-                        <metrics:MetricsControl Title="Diskai"
-                                            Icon="💾"/>
-                    </StackPanel>
-                </ScrollViewer>
+                <!-- Metrikos -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <graphs:CpuUsageChart x:Name="CpuChart" Grid.Row="0"
+                                        Height="150" Margin="10"/>
+
+                    <graphs:RamUsageChart x:Name="RamChart" Grid.Row="1"
+                                        Height="150" Margin="10"/>
+
+                    <graphs:NetworkSpeedChart x:Name="NetworkChart" Grid.Row="2"
+                                            Height="150" Margin="10"/>
+
+                    <graphs:DiskUsageChart x:Name="DiskChart" Grid.Row="3"
+                                        Height="150" Margin="10"/>
+                </Grid>
             </Grid>
         </Border>
 
-        <!-- Sistemos dėklo ikona -->
+        <!-- Taskbar ikona -->
         <tb:TaskbarIcon x:Name="NotifyIcon"
-                        IconSource="/Resources/icon.ico"
-                        ToolTipText="PC Rodikliai"
-                        MenuActivation="RightClick">
+                       IconSource="pack://application:,,,/Resources/icon.ico"
+                       ToolTipText="PC Rodikliai">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Rodyti" Click="OnShowClick"/>

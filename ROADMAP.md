@@ -1,5 +1,138 @@
 # PC-Rodikliai Projekto Planas
 
+## Dabartinė Versija (v0.2.0)
+
+### ✅ Įgyvendinta
+
+1. Bazinė funkcionalumas:
+   - CPU metrikos stebėjimas
+   - RAM naudojimo stebėjimas
+   - GPU metrikos
+   - Tinklo greičio stebėjimas
+   - Diskų naudojimo stebėjimas
+
+2. Vartotojo sąsaja:
+   - Metrikų kortelės
+   - Realaus laiko grafikai
+   - Taskbar integracija
+
+3. Testavimas:
+   - ✅ MetricsViewModel testai
+   - ✅ HardwareMonitorService ribinių atvejų testai
+   - ✅ UI komponentų testai (Charts)
+   - ✅ Integraciniai testai
+   - ✅ Našumo testai
+
+### 🔄 Vykdoma
+
+1. Vartotojo sąsajos tobulinimas:
+   - Tamsios/šviesios temos palaikymas
+   - Metrikų kortelių pertvarkymas
+   - Grafikų stilių tobulinimas
+
+2. Papildomos funkcijos:
+   - Įspėjimai apie kritines metrikas
+   - Metrikų istorijos išsaugojimas
+   - Eksportavimas į CSV
+
+### 📅 Planuojama
+
+1. v0.3.0:
+   - Nustatymų langas
+   - Metrikų atnaujinimo dažnio konfigūracija
+   - Grafikų laikotarpio pasirinkimas
+   - Papildomi grafikai ir statistika
+
+2. v0.4.0:
+   - Procesų stebėjimas
+   - Detalesnė CPU informacija
+   - Detalesnė GPU informacija
+   - Temperatūrų stebėjimas
+
+3. v1.0.0:
+   - Stabilumo patobulinimai
+   - Našumo optimizacijos
+   - Dokumentacijos atnaujinimas
+   - Instaliacijos vedlys
+
+## Testavimo Planas
+
+### Unit Testai
+
+1. ✅ MetricsViewModel:
+   - Duomenų atnaujinimo testai
+   - Grafikų atnaujinimo testai
+   - Formatavimo funkcijų testai
+
+2. ✅ HardwareMonitorService:
+   - Tinklo greitaveikos ribiniai atvejai
+   - Disko užimtumo ribiniai atvejai
+   - Klaidų apdorojimo scenarijai
+
+3. ✅ UI Komponentai:
+   - Grafikų atvaizdavimo testai
+   - Laikrodžio komponento testai
+   - Taskbar ikonos testai
+
+### Integraciniai Testai
+
+✅ Įgyvendinta:
+- Pilnas duomenų kelias nuo serviso iki UI
+- Vartotojo sąveikos scenarijai
+- Sistemos stabilumo testai
+
+### Našumo Testai
+
+✅ Įgyvendinta:
+- Atminties naudojimo testai
+- CPU apkrovos testai
+- UI atsako laiko testai
+
+## Žinomi Trūkumai
+
+1. 🐛 UI Problemos:
+   - Grafikų atnaujinimo vėlavimas esant didelei apkrovai
+   - Netikslus atminties naudojimo atvaizdavimas kai kuriose sistemose
+
+2. 🔧 Techninės Problemos:
+   - Didelė RAM naudojimas ilgai veikiant
+   - Ne visų GPU modelių palaikymas
+   - Neoptimalus tinklo greičio matavimas
+
+## Prioritetai
+
+1. 🔴 Aukštas:
+   - Atminties nutekėjimo problemos sprendimas
+   - GPU palaikymo išplėtimas
+   - Našumo optimizacija
+
+2. 🟡 Vidutinis:
+   - Nustatymų lango implementacija
+   - Grafikų tobulinimas
+   - Dokumentacijos atnaujinimas
+
+3. 🟢 Žemas:
+   - Papildomos statistikos
+   - UI temos
+   - Lokalizacijos
+
+## Sekantys Žingsniai
+
+1. Stabilumo gerinimas:
+   - Atminties nutekėjimo taisymas
+   - Išimčių apdorojimo tobulinimas
+   - Testavimo aprėpties didinimas
+
+2. Vartotojo sąsajos tobulinimas:
+   - Nustatymų lango kūrimas
+   - Grafikų interaktyvumo didinimas
+   - Vartotojo patirties gerinimas
+
+3. Dokumentacija:
+   - API dokumentacijos atnaujinimas
+   - Vartotojo vadovo sukūrimas
+   - Diegimo instrukcijų paruošimas
+
 ## v0.1.0 - Bazinė funkcionalumo versija ✅
 - [x] Sukurti bazinę projekto struktūrą
 - [x] Implementuoti MainViewModel
@@ -13,10 +146,10 @@
 ## v0.2.0 - Realaus laiko atnaujinimai (Dabartinis prioritetas)
 - [x] Pridėti realaus laiko metrikų atnaujinimą
 - [ ] Implementuoti grafikus metrikų vizualizacijai (LiveCharts2)
-  - [ ] CPU apkrovos grafikas
-  - [ ] RAM naudojimo grafikas
-  - [ ] Disko naudojimo grafikas
-  - [ ] Tinklo greičio grafikas
+  - [x] CPU apkrovos grafikas
+  - [x] RAM naudojimo grafikas
+  - [x] Disko naudojimo grafikas
+  - [x] Tinklo greičio grafikas
 - [ ] Pridėti istorijos kaupimą
   - [ ] Duomenų bazės struktūros sukūrimas
   - [ ] Duomenų išsaugojimo logika
@@ -40,14 +173,6 @@
 - [ ] Pridėti procesų sąrašą
 - [ ] Pridėti sistemos informacijos langą
 - [ ] Pridėti hotkey palaikymą
-
-## v1.0.0 - Pirmasis oficialus leidimas
-- [ ] Optimizuoti veikimą
-- [ ] Ištaisyti žinomas klaidas
-- [ ] Pridėti dokumentaciją
-- [ ] Paruošti diegimo paketą
-- [ ] Atlikti testavimą
-- [ ] Parengti vartotojo vadovą
 
 ## Ateities planai
 - Pridėti palaikymą kitiems OS

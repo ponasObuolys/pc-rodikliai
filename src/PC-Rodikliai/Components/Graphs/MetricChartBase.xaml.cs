@@ -12,7 +12,7 @@ namespace PC_Rodikliai.Components.Graphs
 {
     public class MetricChartBase : UserControl
     {
-        protected CartesianChart Chart { get; set; }
+        public required CartesianChart Chart { get; set; }
         protected ObservableCollection<double> Values { get; set; }
         protected int MaxDataPoints { get; set; } = 60; // 1 minute of data at 1 second intervals
 

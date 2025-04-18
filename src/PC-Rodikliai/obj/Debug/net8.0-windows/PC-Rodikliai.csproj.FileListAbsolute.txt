@@ -109,3 +109,9 @@ C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-w
 C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\CpuUsageChart.baml
 C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\MetricChartBase.baml
 C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\CpuUsageChart.g.cs
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\DiskUsageChart.baml
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\NetworkSpeedChart.baml
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\RamUsageChart.baml
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\DiskUsageChart.g.cs
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\NetworkSpeedChart.g.cs
+C:\Users\abutv\Documents\GitHub\pc-rodikliai\src\PC-Rodikliai\obj\Debug\net8.0-windows\Components\Graphs\RamUsageChart.g.cs

@@ -17,7 +17,6 @@
     <SolidColorBrush x:Key="RamBrush" Color="#2196F3"/>
     <SolidColorBrush x:Key="GpuBrush" Color="#4CAF50"/>
     <SolidColorBrush x:Key="NetworkBrush" Color="#9C27B0"/>
-    <SolidColorBrush x:Key="DiskBrush" Color="#FF9800"/>
 
     <!-- Šešėliai -->
     <Color x:Key="ShadowColor">#000000</Color>

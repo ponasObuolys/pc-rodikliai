@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Timers;
 using LibreHardwareMonitor.Hardware;
+using System.Security.Principal;
 
 namespace PC_Rodikliai.Services.HardwareMonitor;
 
@@ -34,10 +35,34 @@ public class HardwareMonitorService : IHardwareMonitorService
         _updateTimer.Elapsed += OnUpdateTimerElapsed;
     }
 
+    private bool IsRunningAsAdmin()
+    {
+        using var identity = WindowsIdentity.GetCurrent();
+        var principal = new WindowsPrincipal(identity);
+        return principal.IsInRole(WindowsBuiltInRole.Administrator);
+    }
+
     public void StartMonitoring()
     {
-        _computer.Open();
-        _updateTimer.Start();
+        try
+        {
+            if (!IsRunningAsAdmin())
+            {
+                throw new UnauthorizedAccessException("Programa turi būti paleista administratoriaus teisėmis.");
+            }
+
+            System.Diagnostics.Debug.WriteLine("Pradedamas monitoringas...");
+            _computer.Open();
+            System.Diagnostics.Debug.WriteLine("Kompiuteris atidarytas sėkmingai");
+            _updateTimer.Start();
+            System.Diagnostics.Debug.WriteLine("Laikmatis paleistas");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Klaida pradedant monitoringą: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw; // Perduodame klaidą aukščiau, kad galėtume ją apdoroti MainWindow
+        }
     }
 
     public void StopMonitoring()
@@ -57,36 +82,50 @@ public class HardwareMonitorService : IHardwareMonitorService
         {
             _computer.Accept(new UpdateVisitor());
 
-            // Update CPU usage
-            var cpuLoad = _computer.Hardware
-                .Where(h => h.HardwareType == HardwareType.Cpu)
-                .SelectMany(cpu => cpu.Sensors)
-                .Where(sensor => sensor.SensorType == SensorType.Load)
-                .Select(sensor => sensor.Value)
-                .DefaultIfEmpty(0)
-                .Average() ?? 0;
-
-            _lastCpuUsage = cpuLoad;
-
-            // Update RAM usage
-            var ramUsage = _computer.Hardware
-                .Where(h => h.HardwareType == HardwareType.Memory)
-                .SelectMany(ram => ram.Sensors)
-                .Where(sensor => sensor.SensorType == SensorType.Load)
-                .Select(sensor => sensor.Value)
-                .DefaultIfEmpty(0)
-                .First() ?? 0;
-
-            _lastRamUsage = ramUsage;
-
-            // Raise event with updated metrics
-            CpuMetricsUpdated?.Invoke(this, new CpuMetricsEventArgs { TotalLoad = (float)_lastCpuUsage });
+            foreach (var hardware in _computer.Hardware)
+            {
+                switch (hardware.HardwareType)
+                {
+                    case HardwareType.Cpu:
+                        UpdateCpuMetrics(hardware);
+                        break;
+                    case HardwareType.Memory:
+                        UpdateRamMetrics(hardware);
+                        break;
+                    case HardwareType.Storage:
+                        UpdateDriveMetrics(hardware);
+                        _lastDiskUsage = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load)?.Value ?? 0;
+                        break;
+                    case HardwareType.Network:
+                        UpdateNetworkMetrics(hardware);
+                        _lastNetworkSpeed = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Throughput)?.Value ?? 0;
+                        break;
+                }
+            }
         }
         catch (Exception ex)
         {
-            // Log error
-            System.Diagnostics.Debug.WriteLine($"Error updating metrics: {ex.Message}");
+            // TODO: Pridėti tinkamą klaidų apdorojimą
+            System.Diagnostics.Debug.WriteLine($"Klaida atnaujinant metrikas: {ex.Message}");
         }
+    }
+
+    private void UpdateCpuMetrics(IHardware cpu)
+    {
+        var totalLoad = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "CPU Total")?.Value ?? 0;
+        var temperature = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name == "CPU Package")?.Value ?? 0;
+        var power = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Power && s.Name == "CPU Package")?.Value ?? 0;
+        var frequency = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock && s.Name == "CPU Core #1")?.Value ?? 0;
+
+        _lastCpuUsage = totalLoad;
+
+        CpuMetricsUpdated?.Invoke(this, new CpuMetricsEventArgs
+        {
+            TotalLoad = totalLoad,
+            Temperature = temperature,
+            Power = power,
+            Frequency = frequency
+        });
     }
 
     private void UpdateRamMetrics(IHardware ram)
@@ -95,6 +134,8 @@ public class HardwareMonitorService : IHardwareMonitorService
         var available = ram.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name == "Memory Available")?.Value ?? 0;
         var total = used + available;
         var load = (used / total) * 100;
+
+        _lastRamUsage = load;
 
         RamMetricsUpdated?.Invoke(this, new RamMetricsEventArgs
         {
@@ -128,6 +169,8 @@ public class HardwareMonitorService : IHardwareMonitorService
         var download = network.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Throughput && s.Name.Contains("Download"))?.Value ?? 0;
         var uploadTotal = network.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Upload"))?.Value ?? 0;
         var downloadTotal = network.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Download"))?.Value ?? 0;
+
+        _lastNetworkSpeed = download + upload;
 
         NetworkMetricsUpdated?.Invoke(this, new NetworkMetricsEventArgs
         {

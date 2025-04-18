@@ -39,8 +39,23 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        _hardwareMonitor.StartMonitoring();
-        _updateTimer.Start();
+        try
+        {
+            System.Diagnostics.Debug.WriteLine("Langas užkrautas, pradedamas monitoringas");
+            _hardwareMonitor.StartMonitoring();
+            _updateTimer.Start();
+            System.Diagnostics.Debug.WriteLine("Monitoringas ir laikmatis paleisti sėkmingai");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Kritinė klaida paleidžiant programą: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            MessageBox.Show($"Įvyko klaida paleidžiant programą: {ex.Message}\n\nPrašome paleisti programą administratoriaus teisėmis.", 
+                          "Klaida", 
+                          MessageBoxButton.OK, 
+                          MessageBoxImage.Error);
+            Application.Current.Shutdown();
+        }
     }
 
     private void OnClosed(object sender, EventArgs e)
@@ -55,6 +70,15 @@ public partial class MainWindow : Window
         {
             var cpuUsage = _hardwareMonitor.GetCpuUsage();
             CpuChart.UpdateValue(cpuUsage);
+
+            var ramUsage = _hardwareMonitor.GetRamUsage();
+            RamChart.UpdateValue(ramUsage);
+
+            var diskUsage = _hardwareMonitor.GetDiskUsage();
+            DiskChart.UpdateValue(diskUsage);
+
+            var networkSpeed = _hardwareMonitor.GetNetworkSpeed();
+            NetworkChart.UpdateValues(networkSpeed, networkSpeed / 2); // Laikinas sprendimas, kol nėra atskiro upload speed
         }
         catch (Exception ex)
         {
