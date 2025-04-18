@@ -5,16 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PC_Rodikliai.Components.Clock"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="200">
-    <StackPanel Orientation="Vertical">
-        <TextBlock x:Name="TimeText"
-                   Text="00:00:00"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="{StaticResource TextBrush}"/>
-        <TextBlock x:Name="DateText"
-                   Text="2024-01-01"
-                   FontSize="12"
-                   Foreground="{StaticResource SubtleTextBrush}"/>
-    </StackPanel>
+             d:DesignHeight="30" d:DesignWidth="100">
+    <TextBlock x:Name="TimeText"
+               Text="00:00:00"
+               FontSize="16"
+               Foreground="{StaticResource TextBrush}"
+               VerticalAlignment="Center"/>
 </UserControl> 

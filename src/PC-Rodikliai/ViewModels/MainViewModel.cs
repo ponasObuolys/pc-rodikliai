@@ -32,9 +32,9 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         Metrics.Add(new MetricsViewModel(_hardwareMonitor, "Diskai", "💾", Brushes.Gold));
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public new event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    protected new virtual void OnPropertyChanged(string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

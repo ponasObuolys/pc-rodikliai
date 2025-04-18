@@ -5,43 +5,20 @@ namespace PC_Rodikliai.Models
 {
     public class Metric : INotifyPropertyChanged
     {
-        private string _title;
-        private double _value;
-        private string _unit;
+        public required string Title { get; set; } = string.Empty;
+        public double Value { get; set; }
+        public required string Unit { get; set; } = string.Empty;
+        public required string Icon { get; set; } = string.Empty;
 
-        public string Title
+        public string Name
         {
-            get => _title;
-            set
-            {
-                _title = value;
-                OnPropertyChanged();
-            }
+            get => Title;
+            set => Title = value;
         }
 
-        public double Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-                OnPropertyChanged();
-            }
-        }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public string Unit
-        {
-            get => _unit;
-            set
-            {
-                _unit = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

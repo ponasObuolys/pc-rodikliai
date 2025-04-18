@@ -18,20 +18,9 @@ public partial class ClockControl : UserControl
             Interval = TimeSpan.FromSeconds(1)
         };
         _timer.Tick += Timer_Tick;
-
-        Loaded += ClockControl_Loaded;
-        Unloaded += ClockControl_Unloaded;
-    }
-
-    private void ClockControl_Loaded(object sender, RoutedEventArgs e)
-    {
-        UpdateTime();
         _timer.Start();
-    }
 
-    private void ClockControl_Unloaded(object sender, RoutedEventArgs e)
-    {
-        _timer.Stop();
+        UpdateTime();
     }
 
     private void Timer_Tick(object? sender, EventArgs e)
@@ -41,8 +30,6 @@ public partial class ClockControl : UserControl
 
     private void UpdateTime()
     {
-        var now = DateTime.Now;
-        TimeText.Text = now.ToString("HH:mm:ss");
-        DateText.Text = now.ToString("yyyy-MM-dd");
+        TimeText.Text = DateTime.Now.ToString("HH:mm:ss");
     }
 } 

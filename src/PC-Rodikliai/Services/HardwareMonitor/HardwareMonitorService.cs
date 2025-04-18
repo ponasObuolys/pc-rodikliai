@@ -9,7 +9,10 @@ public class HardwareMonitorService : IHardwareMonitorService
 {
     private readonly Computer _computer;
     private readonly Timer _updateTimer;
-    private readonly UpdateVisitor _updateVisitor;
+    private double _lastCpuUsage;
+    private double _lastRamUsage;
+    private double _lastDiskUsage;
+    private double _lastNetworkSpeed;
 
     public event EventHandler<CpuMetricsEventArgs>? CpuMetricsUpdated;
     public event EventHandler<RamMetricsEventArgs>? RamMetricsUpdated;
@@ -22,15 +25,12 @@ public class HardwareMonitorService : IHardwareMonitorService
         _computer = new Computer
         {
             IsCpuEnabled = true,
-            IsGpuEnabled = true,
             IsMemoryEnabled = true,
-            IsMotherboardEnabled = true,
             IsStorageEnabled = true,
             IsNetworkEnabled = true
         };
 
-        _updateVisitor = new UpdateVisitor();
-        _updateTimer = new Timer(1000); // 1 sekundė
+        _updateTimer = new Timer(1000); // Update every second
         _updateTimer.Elapsed += OnUpdateTimerElapsed;
     }
 
@@ -46,50 +46,47 @@ public class HardwareMonitorService : IHardwareMonitorService
         _computer.Close();
     }
 
+    public double GetCpuUsage() => _lastCpuUsage;
+    public double GetRamUsage() => _lastRamUsage;
+    public double GetDiskUsage() => _lastDiskUsage;
+    public double GetNetworkSpeed() => _lastNetworkSpeed;
+
     private void OnUpdateTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        _computer.Accept(_updateVisitor);
-
-        foreach (var hardware in _computer.Hardware)
+        try
         {
-            switch (hardware.HardwareType)
-            {
-                case HardwareType.Cpu:
-                    UpdateCpuMetrics(hardware);
-                    break;
-                case HardwareType.Memory:
-                    UpdateRamMetrics(hardware);
-                    break;
-                case HardwareType.GpuNvidia:
-                case HardwareType.GpuAmd:
-                    UpdateGpuMetrics(hardware);
-                    break;
-                case HardwareType.Network:
-                    UpdateNetworkMetrics(hardware);
-                    break;
-                case HardwareType.Storage:
-                    UpdateDriveMetrics(hardware);
-                    break;
-            }
+            _computer.Accept(new UpdateVisitor());
+
+            // Update CPU usage
+            var cpuLoad = _computer.Hardware
+                .Where(h => h.HardwareType == HardwareType.Cpu)
+                .SelectMany(cpu => cpu.Sensors)
+                .Where(sensor => sensor.SensorType == SensorType.Load)
+                .Select(sensor => sensor.Value)
+                .DefaultIfEmpty(0)
+                .Average() ?? 0;
+
+            _lastCpuUsage = cpuLoad;
+
+            // Update RAM usage
+            var ramUsage = _computer.Hardware
+                .Where(h => h.HardwareType == HardwareType.Memory)
+                .SelectMany(ram => ram.Sensors)
+                .Where(sensor => sensor.SensorType == SensorType.Load)
+                .Select(sensor => sensor.Value)
+                .DefaultIfEmpty(0)
+                .First() ?? 0;
+
+            _lastRamUsage = ramUsage;
+
+            // Raise event with updated metrics
+            CpuMetricsUpdated?.Invoke(this, new CpuMetricsEventArgs { TotalLoad = (float)_lastCpuUsage });
         }
-    }
-
-    private void UpdateCpuMetrics(IHardware cpu)
-    {
-        var totalLoad = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "CPU Total")?.Value ?? 0;
-        var temperature = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name == "CPU Package")?.Value ?? 0;
-        var clockSpeed = cpu.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Clock && s.Name == "CPU Core #1")?.Value ?? 0;
-        var coreLoads = cpu.Sensors.Where(s => s.SensorType == SensorType.Load && s.Name.StartsWith("CPU Core #"))
-                                 .Select(s => s.Value ?? 0)
-                                 .ToArray();
-
-        CpuMetricsUpdated?.Invoke(this, new CpuMetricsEventArgs
+        catch (Exception ex)
         {
-            TotalLoad = totalLoad,
-            Temperature = temperature,
-            ClockSpeed = clockSpeed,
-            CoreLoads = coreLoads
-        });
+            // Log error
+            System.Diagnostics.Debug.WriteLine($"Error updating metrics: {ex.Message}");
+        }
     }
 
     private void UpdateRamMetrics(IHardware ram)

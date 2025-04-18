@@ -1,10 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PC_Rodikliai.Services.HardwareMonitor;
-using PC_Rodikliai.Services.AlertService;
-using PC_Rodikliai.Services.HotkeyService;
+using PC_Rodikliai.Services;
 using System.Windows;
 using PC_Rodikliai.Views;
+using PC_Rodikliai.Services.HardwareMonitor;
 
 namespace PC_Rodikliai;
 
@@ -19,29 +18,23 @@ public partial class App : Application
             {
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<IHardwareMonitorService, HardwareMonitorService>();
-                services.AddSingleton<IAlertService, AlertService>();
-                services.AddSingleton<IHotkeyService, HotkeyService>();
+                services.AddSingleton<AlertService>();
+                services.AddSingleton<HotkeyService>();
             })
             .Build();
     }
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
-        await _host.StartAsync();
+        base.OnStartup(e);
 
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
-
-        base.OnStartup(e);
     }
 
-    protected override async void OnExit(ExitEventArgs e)
+    protected override void OnExit(ExitEventArgs e)
     {
-        using (_host)
-        {
-            await _host.StopAsync();
-        }
-
+        _host.Dispose();
         base.OnExit(e);
     }
 } 

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
 using PC_Rodikliai.Services.HardwareMonitor;
+using System;
 
 namespace PC_Rodikliai;
 
@@ -9,6 +10,7 @@ public partial class MainWindow : Window
     private readonly IHardwareMonitorService _hardwareMonitor;
     private bool _isDragging;
     private Point _dragStart;
+    private System.Windows.Threading.DispatcherTimer _updateTimer;
 
     public MainWindow(IHardwareMonitorService hardwareMonitor)
     {
@@ -25,11 +27,40 @@ public partial class MainWindow : Window
         MouseMove += OnMouseMove;
 
         Loaded += OnLoaded;
+        Closed += OnClosed;
+
+        // Grafiko atnaujinimo laikmatis
+        _updateTimer = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(1)
+        };
+        _updateTimer.Tick += UpdateTimer_Tick;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         _hardwareMonitor.StartMonitoring();
+        _updateTimer.Start();
+    }
+
+    private void OnClosed(object sender, EventArgs e)
+    {
+        _updateTimer.Stop();
+        _hardwareMonitor.StopMonitoring();
+    }
+
+    private void UpdateTimer_Tick(object sender, EventArgs e)
+    {
+        try
+        {
+            var cpuUsage = _hardwareMonitor.GetCpuUsage();
+            CpuChart.UpdateValue(cpuUsage);
+        }
+        catch (Exception ex)
+        {
+            // TODO: Pridėti tinkamą klaidų apdorojimą
+            System.Diagnostics.Debug.WriteLine($"Klaida atnaujinant grafiką: {ex.Message}");
+        }
     }
 
     private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
